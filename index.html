@@ -32,7 +32,7 @@ body{
     transition:0.5s ease;
 }
 .fade-out{opacity:0;transform:translateY(-20px);}
-.fade-in{opacity:1;transform:translateY(0);animation:fadeIn 0.5s ease;}
+.fade-in{opacity:1;transform:translateY(0);}
 h1{
     font-size:clamp(20px,5vw,28px);
     margin-bottom:15px;
@@ -53,13 +53,12 @@ p{
     from{text-shadow:0 0 5px #ff4f81;}
     to{text-shadow:0 0 20px #ff9ecb;}
 }
-.buttons,.quiz-options{
+.buttons{
     display:flex;
     flex-direction:column;
     gap:12px;
     align-items:center;
 }
-
 button{
     width:100%;
     max-width:260px;
@@ -68,86 +67,39 @@ button{
     border:none;
     border-radius:50px;
     cursor:pointer;
-    transition:0.3s ease;
 }
 #yesBtn{background:white;color:#ff4f81;font-weight:600;}
 #noBtn{background:rgba(255,255,255,0.3);color:white;position:relative;}
-.quiz-options button{background:rgba(255,255,255,0.2);color:white;}
-.correct{background:#2ecc71 !important;color:white;}
-.wrong{background:#e74c3c !important;color:white;}
-.message{margin-top:10px;font-weight:600;}
-.score{margin-top:5px;font-size:14px;opacity:0.9;}
 .heart{font-size:50px;margin-bottom:15px;animation:beat 1s infinite;}
 @keyframes beat{0%,100%{transform:scale(1);}50%{transform:scale(1.2);}}
-@keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
-@keyframes pop{from{transform:scale(0.8);opacity:0;}to{transform:scale(1);opacity:1;}}
-.success{animation:pop 0.6s ease forwards;}
 .falling-heart{position:fixed;top:-10px;font-size:20px;animation:fall linear forwards;z-index:1;}
 @keyframes fall{to{transform:translateY(110vh);opacity:0;}}
-.confetti{position:fixed;width:8px;height:8px;background:white;top:50%;left:50%;opacity:0.8;animation:explode 1s ease-out forwards;z-index:3;}
-@keyframes explode{to{transform:translate(var(--x),var(--y));opacity:0;}}
-audio{display:none;}
-
-/* --- Slideshow styles --- */
-.slideshow-container{
-    position: relative;
-    max-width: 100%;
-    margin: 20px auto;
-    overflow: hidden;
-    border-radius: 20px;
+video{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    border-radius:15px;
 }
-
-.slide{
-    width: 100%;
-    display: none;
-    height: auto;
-    max-height: 60vh;
-    object-fit: cover;
-    border-radius: 15px;
-    transition: opacity 0.5s ease;
-}
-
-.prev, .next{
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    background: rgba(255,255,255,0.5);
-    border: none;
-    border-radius: 50%;
-    font-size: 24px;
-    padding: 10px 15px;
-    cursor: pointer;
-    transition: 0.3s;
-}
-.prev:hover, .next:hover{background: rgba(255,255,255,0.8);}
-.prev{left:10px;}
-.next{right:10px;}
 </style>
 </head>
 <body>
 
 <div class="card" id="card">
-<div class="heart">💖</div>
-<div class="name">Natalka ✨</div>
-<h1>Czy zostaniesz moją Walentynką? 💕 </h1>
-<p></p>
-<div class="buttons">
-<button id="yesBtn">Tak 😍</button>
-<button id="noBtn">Nie 🙈</button>
+    <div class="heart">💖</div>
+    <div class="name">Natalka ✨</div>
+    <h1>Czy zostaniesz moją Walentynką? 💕</h1>
+    <div class="buttons">
+        <button id="yesBtn">Tak 😍</button>
+        <button id="noBtn">Nie 🙈</button>
+    </div>
 </div>
-</div>
-
-<audio id="music" src="piosenka.mp3" loop autoplay></audio>
-
 
 <script>
 const noBtn=document.getElementById("noBtn");
 const yesBtn=document.getElementById("yesBtn");
 const card=document.getElementById("card");
-const music=document.getElementById("music");
 
 let moveCount=0;
-let score=0;
 
 function moveButton(){
     if(moveCount<6){
@@ -155,10 +107,16 @@ function moveButton(){
         const randomY=Math.floor(Math.random()*80)-40;
         noBtn.style.transform=`translate(${randomX}px,${randomY}px)`;
         moveCount++;
-    }else{noBtn.style.display="none";}
+    }else{
+        noBtn.style.display="none";
+    }
 }
+
 noBtn.addEventListener("mouseover",moveButton);
-noBtn.addEventListener("touchstart",e=>{e.preventDefault();moveButton();});
+noBtn.addEventListener("touchstart",e=>{
+    e.preventDefault();
+    moveButton();
+});
 
 setInterval(()=>{
     const heart=document.createElement("div");
@@ -169,17 +127,6 @@ setInterval(()=>{
     document.body.appendChild(heart);
     setTimeout(()=>heart.remove(),5000);
 },300);
-
-function createConfetti(){
-    for(let i=0;i<40;i++){
-        const conf=document.createElement("div");
-        conf.className="confetti";
-        conf.style.setProperty("--x",(Math.random()*400-200)+"px");
-        conf.style.setProperty("--y",(Math.random()*400-200)+"px");
-        document.body.appendChild(conf);
-        setTimeout(()=>conf.remove(),1000);
-    }
-}
 
 function openFullscreen(){
     if(document.documentElement.requestFullscreen){
@@ -196,112 +143,16 @@ function transition(content){
     },400);
 }
 
-function showQuestion1(){
-    transition(`
-    <h1>Quiz o nas 💕</h1>
-    <p>Kiedy do ciebie pierwszy raz napisałem?</p>
-    <div class='quiz-options'>
-    <button onclick="checkAnswer(this,false,2)">A. 27.04.2023</button>
-    <button onclick="checkAnswer(this,true,2)">B. 25.04.2023</button>
-    <button onclick="checkAnswer(this,false,2)">C. 04.05.2023</button>
-    <button onclick="checkAnswer(this,false,2)">D. 20.04.2023</button>
-    </div>
-    <div class='message' id='msg'></div>
-    <div class='score'>Punkty: ${score}</div>
-    `);
-}
-
-function showQuestion2(){
-    transition(`
-    <h1>Drugie pytanie 💘</h1>
-    <p>Kiedy pierwszy raz się spotkaliśmy?</p>
-    <div class='quiz-options'>
-    <button onclick="checkAnswer(this,false,3)">A. 28.04.2023</button>
-    <button onclick="checkAnswer(this,false,3)">B. 02.05.2023</button>
-    <button onclick="checkAnswer(this,true,3)">C. 06.05.2023</button>
-    <button onclick="checkAnswer(this,false,3)">D. 08.05.2023</button>
-    </div>
-    <div class='message' id='msg'></div>
-    <div class='score'>Punkty: ${score}</div>
-    `);
-}
-
-function showFinal(){
-    music.play();
-    createConfetti();
-    transition(`
-    <div class='success'>
-        <div class='heart'>💘</div>
-        <h1>Super! 🥰</h1>
-        <p>Zdobyłaś ${score}/2 punktów ❤️</p>
-        <p>Kocham cię bardzo natalcia 💖</p>
-
-        <h2>Nasze wspólne wspomnienia 📸</h2>
-        <p> ( zdjęcia się same przełączają ) <p>
-        <div class="slideshow-container">
-            <img src="zdjecie1.jpg" class="slide" alt="Wspólne zdjęcie 1">
-            <img src="zdjecie2.jpg" class="slide" alt="Wspólne zdjęcie 2">
-            <img src="zdjecie3.jpg" class="slide" alt="Wspólne zdjęcie 3">
-            <img src="zdjecie4.jpg" class="slide" alt="Wspólne zdjęcie 4">
-        </div>
-    </div>
-    `);
-
-    setTimeout(initSlideshow, 500); // inicjalizacja slajdów po fade-in
-}
-
-function checkAnswer(btn,isCorrect,next){
-    const buttons=document.querySelectorAll('.quiz-options button');
-    buttons.forEach(b=>b.disabled=true);
-    const msg=document.getElementById('msg');
-
-    if(isCorrect){
-        btn.classList.add('correct');
-        msg.innerText='Dobrze! 😍';
-        score++;
-    }else{
-        btn.classList.add('wrong');
-        msg.innerText='Źle 😏';
-    }
-
-    setTimeout(()=>{
-        if(next===2) showQuestion2();
-        else showFinal();
-    },1200);
-}
-
-yesBtn.addEventListener("click",()=>{
+yesBtn.onclick = function(){
     openFullscreen();
-    score=0;
-    showQuestion1();
-});
-
-// --- Slideshow JS ---
-function initSlideshow(){
-    const slides = document.querySelectorAll('.slide');
-    let slideIndex = 0;
-
-    function showSlide(index){
-        slides.forEach((s,i)=>{
-            s.style.display = i === index ? 'block' : 'none';
-        });
-    }
-
-    showSlide(slideIndex);
-
-    // Automatyczna zmiana co 3 sekundy
-    setInterval(()=>{
-        slideIndex = (slideIndex + 1) % slides.length;
-        showSlide(slideIndex);
-    }, 3000); // 3000 ms = 3 sekundy
-}
-
-yesBtn.addEventListener("click", ()=>{
-    music.play(); // start muzyki po kliknięciu
-    openFullscreen();
-    score=0;
-    showQuestion1();
-});
+    transition(`
+        <video autoplay controls>
+            <source src="rickroll.mp4" type="video/mp4">
+            Twoja przeglądarka nie obsługuje wideo.
+        </video>
+    `);
+};
 </script>
+
 </body>
 </html>
