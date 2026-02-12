@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Natalka ❤️</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins',sans-serif;}
+
+body{
+height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+background:linear-gradient(135deg,#1e1e2f,#3a0f2e);
+overflow:hidden;
+padding:20px;
+}
+
+.card{
+background:rgba(255,255,255,0.1);
+backdrop-filter:blur(20px);
+padding:40px 25px;
+border-radius:25px;
+text-align:center;
+width:100%;
+max-width:420px;
+box-shadow:0 20px 40px rgba(0,0,0,0.4);
+color:white;
+position:relative;
+z-index:2;
+transition:0.5s ease;
+}
+
+.fade-out{opacity:0;transform:translateY(-20px);}
+.fade-in{opacity:1;transform:translateY(0);animation:fadeIn 0.5s ease;}
+
+h1{font-size:clamp(20px,5vw,28px);margin-bottom:15px;}
+p{font-size:clamp(14px,4vw,16px);margin-bottom:20px;opacity:0.95;}
+
+.name{font-size:22px;font-weight:700;margin-bottom:10px;color:#ff9ecb;animation:glow 2s infinite alternate;}
+@keyframes glow{from{text-shadow:0 0 5px #ff4f81;}to{text-shadow:0 0 20px #ff9ecb;}}
+
+.buttons,.quiz-options{display:flex;flex-direction:column;gap:12px;align-items:center;}
+
+button{
+width:100%;
+max-width:260px;
+padding:12px 0;
+font-size:15px;
+border:none;
+border-radius:50px;
+cursor:pointer;
+transition:0.3s ease;
+}
+
+#yesBtn{background:white;color:#ff4f81;font-weight:600;}
+#noBtn{background:rgba(255,255,255,0.3);color:white;position:relative;}
+
+.quiz-options button{background:rgba(255,255,255,0.2);color:white;}
+
+.correct{background:#2ecc71 !important;color:white;}
+.wrong{background:#e74c3c !important;color:white;}
+
+.message{margin-top:10px;font-weight:600;}
+.score{margin-top:5px;font-size:14px;opacity:0.9;}
+
+.heart{font-size:50px;margin-bottom:15px;animation:beat 1s infinite;}
+@keyframes beat{0%,100%{transform:scale(1);}50%{transform:scale(1.2);}}
+@keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+@keyframes pop{from{transform:scale(0.8);opacity:0;}to{transform:scale(1);opacity:1;}}
+.success{animation:pop 0.6s ease forwards;}
+
+.falling-heart{position:fixed;top:-10px;font-size:20px;animation:fall linear forwards;z-index:1;}
+@keyframes fall{to{transform:translateY(110vh);opacity:0;}}
+
+.confetti{position:fixed;width:8px;height:8px;background:white;top:50%;left:50%;opacity:0.8;animation:explode 1s ease-out forwards;z-index:3;}
+@keyframes explode{to{transform:translate(var(--x),var(--y));opacity:0;}}
+
+audio{display:none;}
+</style>
+</head>
+<body>
+
+<div class="card" id="card">
+<div class="heart">💖</div>
+<div class="name">Natalka ✨</div>
+<h1>Czy zostaniesz moją Walentynką? 💕 </h1>
+<p>i przepraszam że wcześniej nie zapytałem</p>
+<div class="buttons">
+<button id="yesBtn">Tak 😍</button>
+<button id="noBtn">Nie 🙈</button>
+</div>
+</div>
+
+<audio id="music" src="piosenka.mp3" loop></audio>
+
+<script>
+const noBtn=document.getElementById("noBtn");
+const yesBtn=document.getElementById("yesBtn");
+const card=document.getElementById("card");
+const music=document.getElementById("music");
+
+let moveCount=0;
+let score=0;
+
+function moveButton(){
+if(moveCount<6){
+const randomX=Math.floor(Math.random()*150)-75;
+const randomY=Math.floor(Math.random()*80)-40;
+noBtn.style.transform=`translate(${randomX}px,${randomY}px)`;
+moveCount++;
+}else{noBtn.style.display="none";}}
+
+noBtn.addEventListener("mouseover",moveButton);
+noBtn.addEventListener("touchstart",e=>{e.preventDefault();moveButton();});
+
+setInterval(()=>{
+const heart=document.createElement("div");
+heart.className="falling-heart";
+heart.innerHTML="💗";
+heart.style.left=Math.random()*100+"vw";
+heart.style.animationDuration=(Math.random()*3+2)+"s";
+document.body.appendChild(heart);
+setTimeout(()=>heart.remove(),5000);
+},300);
+
+function createConfetti(){
+for(let i=0;i<40;i++){
+const conf=document.createElement("div");
+conf.className="confetti";
+conf.style.setProperty("--x",(Math.random()*400-200)+"px");
+conf.style.setProperty("--y",(Math.random()*400-200)+"px");
+document.body.appendChild(conf);
+setTimeout(()=>conf.remove(),1000);
+}}
+
+function openFullscreen(){
+if(document.documentElement.requestFullscreen){document.documentElement.requestFullscreen();}}
+
+function transition(content){
+card.classList.add("fade-out");
+setTimeout(()=>{
+card.innerHTML=content;
+card.classList.remove("fade-out");
+card.classList.add("fade-in");
+},400);
+}
+
+function showQuestion1(){
+transition(`
+<h1>Quiz o nas 💕</h1>
+<p>Kiedy do ciebie pierwszy raz napisałem?</p>
+<div class='quiz-options'>
+<button onclick="checkAnswer(this,false,2)">A. 27.04.2023</button>
+<button onclick="checkAnswer(this,true,2)">B. 25.04.2023</button>
+<button onclick="checkAnswer(this,false,2)">C. 04.05.2023</button>
+<button onclick="checkAnswer(this,false,2)">D. 20.04.2023</button>
+</div>
+<div class='message' id='msg'></div>
+<div class='score'>Punkty: ${score}</div>
+`);
+}
+
+function showQuestion2(){
+transition(`
+<h1>Drugie pytanie 💘</h1>
+<p>Kiedy pierwszy raz się spotkaliśmy?</p>
+<div class='quiz-options'>
+<button onclick="checkAnswer(this,false,3)">A. 28.04.2023</button>
+<button onclick="checkAnswer(this,false,3)">B. 02.05.2023</button>
+<button onclick="checkAnswer(this,true,3)">C. 06.05.2023</button>
+<button onclick="checkAnswer(this,false,3)">D. 08.05.2023</button>
+</div>
+<div class='message' id='msg'></div>
+<div class='score'>Punkty: ${score}</div>
+`);
+}
+
+function showFinal(){
+music.play();
+createConfetti();
+transition(`
+<div class='success'>
+<div class='heart'>💘</div>
+<h1>Super! 🥰</h1>
+<p>Zdobyłaś ${score}/2 punktów ❤️</p>
+<p>już się nie mogę doczekać!</p>
+</div>
+`);
+}
+
+function checkAnswer(btn,isCorrect,next){
+const buttons=document.querySelectorAll('.quiz-options button');
+buttons.forEach(b=>b.disabled=true);
+
+const msg=document.getElementById('msg');
+
+if(isCorrect){
+btn.classList.add('correct');
+msg.innerText='Dobrze! 😍';
+score++;
+}else{
+btn.classList.add('wrong');
+msg.innerText='Źle 😏';
+}
+
+setTimeout(()=>{
+if(next===2) showQuestion2();
+else showFinal();
+},1200);
+}
+
+yesBtn.addEventListener("click",()=>{
+openFullscreen();
+score=0;
+showQuestion1();
+});
+</script>
+</body>
+</html>
