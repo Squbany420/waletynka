@@ -121,7 +121,7 @@ noBtn.addEventListener("touchstart",e=>{
 setInterval(()=>{
     const heart=document.createElement("div");
     heart.className="falling-heart";
-    heart.innerHTML="💗";
+    heart.innerHTML="😈";
     heart.style.left=Math.random()*100+"vw";
     heart.style.animationDuration=(Math.random()*3+2)+"s";
     document.body.appendChild(heart);
@@ -145,13 +145,22 @@ function transition(content){
 
 yesBtn.onclick = function(){
     openFullscreen();
+
     transition(`
-        <video autoplay controls>
+        <video id="rick" autoplay>
             <source src="rickroll.mp4" type="video/mp4">
             Twoja przeglądarka nie obsługuje wideo.
         </video>
     `);
+
+    setTimeout(()=>{
+        const video = document.getElementById("rick");
+        video.volume = 1.0;   // maksymalna głośność
+        video.muted = false;  // upewnienie się że nie jest wyciszone
+        video.play();
+    },500);
 };
+
 </script>
 
 </body>
