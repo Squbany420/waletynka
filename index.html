@@ -95,15 +95,18 @@ audio{display:none;}
     margin: 20px auto;
     overflow: hidden;
     border-radius: 20px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
 }
+
 .slide{
     width: 100%;
     display: none;
+    height: auto;
+    max-height: 60vh;
     object-fit: cover;
     border-radius: 15px;
-    transition: 0.5s ease;
+    transition: opacity 0.5s ease;
 }
+
 .prev, .next{
     position: absolute;
     top: 50%;
@@ -135,6 +138,7 @@ audio{display:none;}
 </div>
 
 <audio id="music" src="piosenka.mp3" loop autoplay></audio>
+
 
 <script>
 const noBtn=document.getElementById("noBtn");
@@ -233,13 +237,12 @@ function showFinal(){
         <p>Kocham cię bardzo natalcia 💖</p>
 
         <h2>Nasze wspólne wspomnienia 📸</h2>
+        <p> ( zdjęcia się same przełączają ) <p>
         <div class="slideshow-container">
             <img src="zdjecie1.jpg" class="slide" alt="Wspólne zdjęcie 1">
             <img src="zdjecie2.jpg" class="slide" alt="Wspólne zdjęcie 2">
             <img src="zdjecie3.jpg" class="slide" alt="Wspólne zdjęcie 3">
             <img src="zdjecie4.jpg" class="slide" alt="Wspólne zdjęcie 4">
-            <button class="prev">&#10094;</button>
-            <button class="next">&#10095;</button>
         </div>
     </div>
     `);
@@ -275,27 +278,30 @@ yesBtn.addEventListener("click",()=>{
 
 // --- Slideshow JS ---
 function initSlideshow(){
-    let slideIndex = 0;
     const slides = document.querySelectorAll('.slide');
-    const prev = document.querySelector('.prev');
-    const next = document.querySelector('.next');
+    let slideIndex = 0;
 
     function showSlide(index){
-        slides.forEach((s,i)=> s.style.display = i===index ? 'block' : 'none');
+        slides.forEach((s,i)=>{
+            s.style.display = i === index ? 'block' : 'none';
+        });
     }
 
-    prev.addEventListener('click',()=>{
-        slideIndex = (slideIndex-1+slides.length)%slides.length;
-        showSlide(slideIndex);
-    });
-
-    next.addEventListener('click',()=>{
-        slideIndex = (slideIndex+1)%slides.length;
-        showSlide(slideIndex);
-    });
-
     showSlide(slideIndex);
+
+    // Automatyczna zmiana co 3 sekundy
+    setInterval(()=>{
+        slideIndex = (slideIndex + 1) % slides.length;
+        showSlide(slideIndex);
+    }, 3000); // 3000 ms = 3 sekundy
 }
+
+yesBtn.addEventListener("click", ()=>{
+    music.play(); // start muzyki po kliknięciu
+    openFullscreen();
+    score=0;
+    showQuestion1();
+});
 </script>
 </body>
 </html>
